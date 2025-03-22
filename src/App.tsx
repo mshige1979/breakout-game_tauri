@@ -114,26 +114,6 @@ function App() {
     let gameStarted = false;
 
     /**
-     * ライフを失った状態かどうか
-     */
-    let isLifeLost = false;
-
-    /**
-     * ステージがクリアされたかどうか
-     */
-    let isGameCleared = false;
-
-    /**
-     * ゲームオーバーかどうか
-     */
-    let isGameOver = false;
-
-    /**
-     * ゲームが完全クリアされたかどうか
-     */
-    let isGameCompleted = false;
-
-    /**
      * 右キーが押されているかどうか
      */
     let rightPressed = false;
@@ -179,11 +159,6 @@ function App() {
      * 現在の残機数
      */
     let lives = initialLives;
-
-    /**
-     * ステージのアンロック状態
-     */
-    let unlockedStages = Array(maxStage).fill(true);
 
     /**
      * ステージのクリア状態
@@ -503,72 +478,6 @@ function App() {
       }
     }
 
-    // ========== ステージ選択・リセット関数 ==========
-
-    /**
-     * ゲームのリセットを行う関数
-     * @param nextStage - 次のステージに進むかどうか
-     * @param lostLife - ライフを失ったかどうか
-     * @param selectStage - ステージを選択するかどうか
-     */
-    function resetGame(nextStage = false, lostLife = false, selectStage = false) {
-      // ライフロス時の処理
-      if (lostLife) {
-        gameStarted = false;
-        isLifeLost = true;
-        
-        // ボールとパドルの位置をリセット
-        ballX = canvasWidth / 2;
-        ballY = canvasHeight - paddleYOffset - ballRadius - 10;
-        
-        // ボールの速度をリセット
-        const settings = getCurrentStageSettings();
-        ballDX = (settings.ballSpeed ?? 2) * (Math.random() > 0.5 ? 1 : -1);
-        ballDY = -(settings.ballSpeed ?? 2);
-        
-        paddleX = (canvasWidth - paddleWidth) / 2;
-        return;
-      }
-      
-      // 完全リセットかステージ進行かの処理
-      if (!nextStage) {
-        score = 0; // 完全にリセットする場合のみスコアをリセット
-        currentStage = 1;
-        lives = initialLives;
-      } else {
-        // ステージ進行時はスコアを維持する
-        currentStage++;
-        if (currentStage > maxStage) {
-          isGameCompleted = true;
-          return;
-        }
-      }
-      
-      // 現在のステージ設定を適用
-      const settings = getCurrentStageSettings();
-      brickRowCount = settings.rows ?? 3;
-      brickColumnCount = settings.columns ?? 5;
-      paddleWidth = settings.paddleWidth ?? 100;
-      brickWidth = updateBrickDimensions();
-      ballDX = (settings.ballSpeed ?? 2) * (Math.random() > 0.5 ? 1 : -1);
-      ballDY = -(settings.ballSpeed ?? 2);
-      
-      // ゲーム状態をリセット
-      isGameCleared = false;
-      isGameOver = false;
-      isGameCompleted = false;
-      gameStarted = false;
-      isLifeLost = false;
-      
-      // ボールとパドルの位置をリセット
-      ballX = canvasWidth / 2;
-      ballY = canvasHeight - paddleYOffset - ballRadius - 10;
-      paddleX = (canvasWidth - paddleWidth) / 2;
-      
-      // ブロックを初期化
-      initializeBricks();
-    }
-
     /**
      * 特定のステージを選択して開始する関数
      * @param stageNum - 選択するステージ番号（1始まり）
@@ -599,11 +508,6 @@ function App() {
         
         // ステージ選択からの開始時はスコアを維持
         lives = initialLives;
-        
-        // ゲーム状態をリセット
-        isGameCleared = false;
-        isGameOver = false;
-        isGameCompleted = false;
         
         // ボールとパドルの位置をリセット
         ballX = canvasWidth / 2;
@@ -1054,12 +958,6 @@ function App() {
       ctx.fillStyle = "#FF5555";
       ctx.fillText("Rキーでクリア状態をリセット", canvasWidth / 2, canvasHeight - 30);
       
-      // デバッグ情報
-      ctx.font = "14px Arial";
-      ctx.fillStyle = "#666666";
-      ctx.textAlign = "start";
-      ctx.fillText(`選択中: ステージ ${selectedStageIndex + 1}`, 20, canvasHeight - 90);
-      
       // 選択中のタイルにエフェクト
       const now = Date.now();
       const pulse = Math.sin(now / 200) * 0.2 + 0.8; // 時間によって変化する脈動効果
@@ -1390,8 +1288,7 @@ function App() {
           ctx.textAlign = "center";
           ctx.fillText("(または ESC でステージ選択に戻る)", canvasWidth / 2, canvasHeight / 2 + 100);
           
-          // すべてのステージをアンロックしクリア状態に
-          unlockedStages = Array(maxStage).fill(true);
+          // すべてのステージをクリア状態に
           clearedStages = Array(maxStage).fill(true);
           saveProgress();
           
@@ -1414,8 +1311,6 @@ function App() {
       if (e.key === " " || e.code === "Space") {
         e.preventDefault();
       }
-
-      console.log(`Key pressed: ${e.key}, GameState: ${gameState}`);
 
       // ゲーム状態に応じた処理の振り分け
       switch (gameState) {
@@ -1499,7 +1394,6 @@ function App() {
         case "Space":
           // スペースキーでステージ選択
           const selectedStage = selectedStageIndex + 1;
-          console.log(`スペースキー: ステージ${selectedStage}を選択`);
           selectStage(selectedStage);
           break;
           
@@ -1543,7 +1437,6 @@ function App() {
         case "Spacebar":
         case "Space":
           // スペースキーで一時停止/再開
-          console.log(`プレイ中のスペースキー: gameStarted=${gameStarted} -> ${!gameStarted}`);
           gameStarted = !gameStarted;
           break;
           
@@ -1551,7 +1444,6 @@ function App() {
           // ESCキーでステージ選択に戻る（一時停止中のみ）
           if (!gameStarted) {
             gameState = GameState.STAGE_SELECT;
-            console.log("ステージ選択に戻ります");
           }
           break;
       }
@@ -1570,14 +1462,12 @@ function App() {
           switch (gameState) {
             case GameState.LIFE_LOST:
               // ライフロスからの再開
-              console.log("ライフロスからの再開");
               gameState = GameState.PLAYING;
               gameStarted = true;
               break;
                   
             case GameState.STAGE_CLEAR:
               // ステージクリア後の処理
-              console.log("ステージクリア処理");
               clearedStages[currentStage - 1] = true;
               saveProgress();
               
@@ -1612,7 +1502,6 @@ function App() {
                   gameStarted = false; // 一時停止状態でスタート
                 } else {
                   // エラー処理
-                  console.error(`ステージ${currentStage}の設定が見つかりません`);
                   gameState = GameState.STAGE_SELECT;
                 }
               } else {
@@ -1623,7 +1512,6 @@ function App() {
                   
             case GameState.GAME_COMPLETE:
               // ゲームクリア後の処理
-              console.log("ゲームクリア後の処理");
               clearedStages = Array(maxStage).fill(true);
               saveProgress();
               
@@ -1633,7 +1521,6 @@ function App() {
                   
             case GameState.GAME_OVER:
               // ゲームオーバー後の処理
-              console.log("ゲームオーバー後の処理");
               // ゲームオーバー後はスコアをリセット
               score = 0;
               gameState = GameState.STAGE_SELECT;
@@ -1644,15 +1531,13 @@ function App() {
         case "Escape":
           // ESCキーでステージ選択に戻る（スコアは維持）
           gameState = GameState.STAGE_SELECT;
-          console.log("ESCでステージ選択画面に戻ります");
           break;
           
         case "r":
         case "R":
           // Rキーでスコアリセット
-          if (confirm("スコアもリセットします。よろしいですか？")) {
+          if (confirm("スコアをリセットします。よろしいですか？")) {
             score = 0;
-            console.log("スコアをリセットしました");
           }
           break;
       }
