@@ -1,0 +1,239 @@
+.logo.vite:hover {
+  filter: drop-shadow(0 0 2em #747bff);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafb);
+}
+
+/* ベース設定 */
+:root {
+  --background-color: #1a1a2e;
+  --primary-color: #0f3460;
+  --secondary-color: #e94560;
+  --accent-color: #16213e;
+  --light-color: #f1f1f1;
+  --highlight-color: #00adb5;
+  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: var(--light-color);
+  background-color: var(--background-color);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 既存のスタイルをオーバーライド */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(135deg, var(--background-color), var(--accent-color));
+}
+
+/* ゲームコンテナスタイル */
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: 0 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.container {
+  margin: 0;
+  padding-top: 10vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  background-size: 200% 200%;
+  animation: gradientBackground 15s ease infinite;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: 0.75s;
+}
+
+.logo.tauri:hover {
+  filter: drop-shadow(0 0 2em #24c8db);
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+h1 {
+  text-align: center;
+}
+
+input,
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  color: #0f0f0f;
+  background-color: #ffffff;
+  transition: border-color 0.25s;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #396cd8;
+}
+button:active {
+  border-color: #396cd8;
+  background-color: #e8e8e8;
+}
+
+input,
+button {
+  outline: none;
+}
+
+#greet-input {
+  margin-right: 5px;
+}
+
+/* ステージ選択画面用のスタイル */
+.stage-tile {
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+  backdrop-filter: blur(5px);
+  overflow: hidden;
+}
+
+.stage-tile:hover {
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.stage-tile.selected {
+  transform: scale(1.1) translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 
+              0 0 15px var(--highlight-color);
+  border: 2px solid var(--highlight-color);
+}
+
+/* アニメーション効果追加 */
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ゲームキャンバス用スタイル */
+canvas {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 8px !important;
+  border: 1px solid var(--highlight-color) !important;
+  transition: all 0.3s ease-in-out;
+}
+
+canvas:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* ゲームキャンバス用スタイル */
+.game-canvas {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid var(--highlight-color);
+  max-width: 95%;
+  max-height: 94vh;
+  transition: all 0.3s ease-in-out;
+}
+
+.game-canvas:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* テキストにグロー効果を追加 */
+.glow-text {
+  text-shadow: 0 0 10px var(--highlight-color), 
+               0 0 20px var(--highlight-color), 
+               0 0 30px var(--highlight-color);
+}
+
+/* ボタンスタイル改善 */
+button {
+  background: linear-gradient(to right, var(--primary-color), var(--highlight-color));
+  color: var(--light-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* レスポンシブデザイン調整 */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #121212;
+    --accent-color: #1e1e1e;
+  }
+}
